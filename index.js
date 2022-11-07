@@ -19,9 +19,17 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
-    const eventsCollection = client
-        .db('volunteerNetwork')
-        .collection('volunteerEvents');
+    const database = client.db('volunteerNetwork');
+    const eventsCollection = database.collection('volunteerEvents');
+    const volunteerCollection = database.collection('activeVolunteers');
+
+    // activities
+    app.post('/activities', async (req, res) => {
+        const user = req.body;
+        const result = await volunteerCollection.insertOne(user);
+
+        res.send(result);
+    });
 
     // events
     app.get('/events', async (req, res) => {
@@ -41,7 +49,7 @@ async function run() {
     });
 }
 
-run().catch((err) => console.dir);
+run().catch((err) => console.log(err));
 
 app.get('/', (req, res) => {
     res.send({
