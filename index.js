@@ -24,6 +24,18 @@ async function run() {
     const volunteerCollection = database.collection('activeVolunteers');
 
     // activities
+    app.get('/activities', async (req, res) => {
+        const email = req.query.email;
+        const query = {
+            email: email,
+        };
+
+        const cursor = volunteerCollection.find(query);
+        const events = await cursor.toArray();
+
+        res.send(events);
+    });
+
     app.post('/activities', async (req, res) => {
         const user = req.body;
         const result = await volunteerCollection.insertOne(user);
