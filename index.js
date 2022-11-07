@@ -25,10 +25,12 @@ async function run() {
 
     // activities
     app.get('/activities', async (req, res) => {
-        const email = req.query.email;
-        const query = {
-            email: email,
-        };
+        let query = {};
+        if (req.query.email) {
+            query = {
+                email: req.query.email,
+            };
+        }
 
         const cursor = volunteerCollection.find(query);
         const events = await cursor.toArray();
@@ -39,6 +41,15 @@ async function run() {
     app.post('/activities', async (req, res) => {
         const user = req.body;
         const result = await volunteerCollection.insertOne(user);
+
+        res.send(result);
+    });
+
+    app.delete('/activities/:id', async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        const query = { _id: ObjectId(id) };
+        const result = await volunteerCollection.deleteOne(query);
 
         res.send(result);
     });
